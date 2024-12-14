@@ -27,7 +27,7 @@ export default function MyTickets() {
       description: "Join the love revolution at Lovefest 2021, featuring top DJs and an amazing atmosphere.",
       quantity: 1,
       image: "/lovefest.jpg",
-      qrCode: "/placeholder.svg?height=300&width=300",
+      qrCode: "/qr.png",
     },
     {
       id: "3",
@@ -38,7 +38,7 @@ export default function MyTickets() {
       description: "Indulge in a perfect blend of music and wine at the Grapevine Gathering.",
       quantity: 4,
       image: "/grapevine.jpg",
-      qrCode: "/placeholder.svg?height=300&width=300",
+      qrCode: "/qr.png",
     },
     {
       id: "4",
@@ -49,7 +49,7 @@ export default function MyTickets() {
       description: "Celebrate the season with local produce, crafts, and live performances.",
       quantity: 5,
       image: "/harvest.jpg",
-      qrCode: "/placeholder.svg?height=300&width=300",
+      qrCode: "/qr.png",
     }
   ]
 
