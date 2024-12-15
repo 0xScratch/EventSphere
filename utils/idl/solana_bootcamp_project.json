@@ -1,0 +1,109 @@
+{
+  "version": "0.1.0",
+  "name": "solana_bootcamp_project",
+  "instructions": [
+    {
+      "name": "createEvent",
+      "accounts": [
+        {
+          "name": "event",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "organizer",
+          "type": "publicKey"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "type": "i64"
+        },
+        {
+          "name": "ticketQuantity",
+          "type": "u32"
+        },
+        {
+          "name": "ticketPrice",
+          "type": "u64"
+        },
+        {
+          "name": "ticketsMinted",
+          "type": "u32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "EventContract",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "organizer",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "type": "i64"
+          },
+          {
+            "name": "ticketQuantity",
+            "type": "u32"
+          },
+          {
+            "name": "ticketPrice",
+            "type": "u64"
+          },
+          {
+            "name": "ticketsMinted",
+            "type": "u32"
+          },
+          {
+            "name": "soulBoundTokenMint",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "address": "DUV1ET47i14AqZnJD1N4CRiQ2X8fJNcPvJ3iXDisfDAz"
+  }
+}
