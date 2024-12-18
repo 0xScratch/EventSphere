@@ -3,12 +3,23 @@
 import { useState } from 'react'
 import { getProgram } from '@/utils/connectAnchorProgram'
 import { BN, web3, AnchorError, AnchorProvider } from '@project-serum/anchor'
-import { MapPin, Upload, DollarSign } from 'lucide-react'
+import { MapPin, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { z } from 'zod'
+
+const eventSchema = z.object({
+  name: z.string().min(1, 'Event name is required'),
+  description: z.string().min(1, 'Event description is required'),
+  location: z.string().min(1, 'Event location is required'),
+  ticketQuantity: z.number().min(1, 'At least one ticket is required'),
+  ticketPrice: z.number().min(0, 'Please enter a valid ticket price'),
+  date: z.string().min(1, 'Event date is required'),
+  time: z.string().min(1, 'Event time is required'),
+})
 
 export default function CreateEvent() {
   const [image, setImage] = useState<File | null>(null)
@@ -18,14 +29,38 @@ export default function CreateEvent() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [location, setLocation] = useState('')
-  const [ticketQuantity, setTicketQuantity] = useState(10)
-  const [ticketPrice, setTicketPrice] = useState(20)
+  const [ticketQuantity, setTicketQuantity] = useState<number | undefined>(undefined)
+  const [ticketPrice, setTicketPrice] = useState<number | undefined>(undefined)
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('')
   const [notice, setNotice] = useState({ msg: '', type: '' })
+  const [errors, setErrors] = useState<{ [key: string]: string}>({})
 
   const createEvent = async () => {
     setNotice({ msg: '', type: '' })
+    setErrors({})
 
-    // We need Validate using Zod schema
+    // Validate using Zod schema
+    const validationResult = eventSchema.safeParse({
+      name,
+      description,
+      location,
+      ticketQuantity,
+      ticketPrice,
+      date,
+      time,
+    })
+
+    if (!validationResult.success) {
+      const newErrors: { [key: string]: string } = {}
+      validationResult.error.errors.forEach((error) => {
+        if (error.path.length > 0) {
+          newErrors[error.path[0]] = error.message
+        }
+      })
+      setErrors(newErrors)
+      return
+    }
 
     setIsLoading(true)
 
@@ -37,7 +72,13 @@ export default function CreateEvent() {
       const eventAccount = web3.Keypair.generate()
       const organizer = provider.wallet.publicKey
       const ticketsMinted = 11111111
-      const date = 45211121
+
+      // Combine date and time into a Unix timestamp
+      const eventDate = new Date(`${date}T${time}`)
+      const unixTimestamp = Math.floor(eventDate.getTime() / 1000)
+
+      // Convert ticket price from SOL to lamports
+      const ticketPriceLamports = (ticketPrice ?? 0) * 1_000_000_000
 
       await program.methods
         .createEvent(
@@ -45,9 +86,9 @@ export default function CreateEvent() {
           name,
           description,
           location,
-          new BN(date.toString()),
+          new BN(unixTimestamp.toString()),
           ticketQuantity,
-          new BN(ticketPrice.toString()), // Use BN for u64
+          new BN(ticketPriceLamports.toString()), // Use BN for u64
           ticketsMinted
         )
         .accounts({
@@ -134,6 +175,7 @@ export default function CreateEvent() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter the name of your event"
               />
+              {errors.name && <p className='text-red-500 text-sm mt-1'>{errors.name}</p>}
             </div>
             <div className="mb-6">
               <label
@@ -149,6 +191,7 @@ export default function CreateEvent() {
                 placeholder="Describe your event"
                 className="h-32"
               />
+              {errors.description && <p className='text-red-500 text-sm mt-1'>{errors.description}</p>}
             </div>
             <div className="mb-6">
               <label
@@ -168,6 +211,7 @@ export default function CreateEvent() {
                   className="pl-10"
                 />
               </div>
+              {errors.location && <p className='text-red-500 text-sm mt-1'>{errors.location}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
@@ -180,8 +224,11 @@ export default function CreateEvent() {
                 <Input
                   id="event-date"
                   type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
                   className="appearance-none"
                 />
+                {errors.date && <p className='text-red-500 text-sm mt-1'>{errors.date}</p>}
               </div>
               <div>
                 <label
@@ -193,8 +240,11 @@ export default function CreateEvent() {
                 <Input
                   id="event-time"
                   type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
                   className="appearance-none"
                 />
+                {errors.time && <p className='text-red-500 text-sm mt-1'>{errors.time}</p>}
               </div>
             </div>
             <div className="mb-6">
@@ -207,32 +257,30 @@ export default function CreateEvent() {
               <Input
                 id="ticket-quantity"
                 type="number"
-                value={ticketQuantity}
+                value={ticketQuantity === undefined ? '' : ticketQuantity}
                 onChange={(e) => setTicketQuantity(Number(e.target.value))}
                 placeholder="Enter the number of available tickets"
                 min="1"
               />
+              {errors.ticketQuantity && <p className='text-red-500 text-sm mt-1'>{errors.ticketQuantity}</p>}
             </div>
             <div className="mb-6">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="ticket-price"
               >
-                Ticket Price
+                Ticket Price (SOL)
               </label>
-              <div className="relative">
-                <DollarSign className="absolute top-1/2 transform -translate-y-1/2 left-3 h-5 w-5 text-gray-400" />
-                <Input
-                  id="ticket-price"
-                  type="number"
-                  placeholder="Enter the ticket price"
-                  value={ticketPrice}
-                  onChange={(e) => setTicketPrice(Number(e.target.value))}
-                  min="0"
-                  step="0.01"
-                  className="pl-10"
-                />
-              </div>
+              <Input
+                id="ticket-price"
+                type="number"
+                placeholder="Enter the ticket price in SOL"
+                value={ticketPrice === undefined ? '' : ticketPrice}
+                onChange={(e) => setTicketPrice(Number(e.target.value))}
+                min="0"
+                step="0.01"
+              />
+              {errors.ticketPrice && <p className='text-red-500 text-sm mt-1'>{errors.ticketPrice}</p>}
             </div>
             <Button
               onClick={() => createEvent()}
