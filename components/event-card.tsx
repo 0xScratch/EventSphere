@@ -12,7 +12,6 @@ interface EventCardProps {
     description: string
     time: string
     location: string
-    availableTickets: number
     price: number
     id: string
     ticketQuantity: number;

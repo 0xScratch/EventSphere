@@ -75,14 +75,14 @@ export function EventDetailsUser({isOpen, onClose, event}: EventDetailsUserProps
                     event: new web3.PublicKey(event.id),
                     ticketPurchase: ticketPurchasePDA,
                     systemProgram: web3.SystemProgram.programId,
-                })
+                } as never)
                 .rpc();
 
             console.log("Success:", tx);
             onClose();
         } catch (error) {
             console.error("Detailed error:", error);
-            setErrorMessage(error.toString());
+            setErrorMessage(error instanceof Error ? error.message : String(error));
         } finally {
             setIsLoading(false);
         }

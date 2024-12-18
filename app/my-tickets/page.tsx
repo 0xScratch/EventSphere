@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import {useWallet} from '@solana/wallet-adapter-react'
 import {getProgram} from '@/utils/connectAnchorProgram'
 import {Calendar, MapPin, SearchIcon, Grid} from 'lucide-react'
@@ -27,22 +27,20 @@ export default function MyTickets() {
     const [loading, setLoading] = useState(true)
     const wallet = useWallet()
 
-    useEffect(() => {
-        if (wallet.publicKey) {
-            fetchTickets()
+    const fetchTickets = useCallback(async () => {
+        if (!wallet.publicKey) {
+            console.warn("Wallet is not connected");
+            return;
         }
-    }, [wallet.publicKey])
-
-    const fetchTickets = async () => {
         try {
             const program = getProgram()
             const ticketPurchases = await program.account.ticketPurchase.all([
                 {
                     memcmp: {
                         offset: 8,
-                        bytes: wallet.publicKey.toBase58()
-                    }
-                }
+                        bytes: wallet.publicKey?.toBase58(), // Optional chaining for safety
+                    },
+                },
             ])
 
             const tickets = await Promise.all(
@@ -56,20 +54,26 @@ export default function MyTickets() {
                         location: event.location,
                         description: event.description,
                         quantity: purchase.account.quantity,
-                        image: "/dimensions.png",
-                        qrCode: "/qr.png",
-                        eventPubkey: purchase.account.eventId.toString()
+                        image: '/dimensions.png',
+                        qrCode: '/qr.png',
+                        eventPubkey: purchase.account.eventId.toString(),
                     }
                 })
             )
 
             setTickets(tickets)
         } catch (error) {
-            console.error("Failed to fetch tickets:", error)
+            console.error('Failed to fetch tickets:', error)
         } finally {
             setLoading(false)
         }
-    }
+    }, [wallet.publicKey]) // Added a dependency on wallet.publicKey
+
+    useEffect(() => {
+        if (wallet.publicKey) {
+            fetchTickets()
+        }
+    }, [wallet.publicKey, fetchTickets])
 
     if (!wallet.publicKey) {
         return (
@@ -150,7 +154,7 @@ export default function MyTickets() {
                             {tickets.length === 0 && (
                                 <div className="col-span-full text-center py-10">
                                     <div className="text-2xl font-bold mb-2">No tickets found</div>
-                                    <p className="text-gray-600">You haven't purchased any tickets yet.</p>
+                                    <p className="text-gray-600">You haven`t purchased any tickets yet.</p>
                                 </div>
                             )}
                         </div>

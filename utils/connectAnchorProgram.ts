@@ -1,6 +1,7 @@
 import {Connection} from '@solana/web3.js'
-import {Program, AnchorProvider, Idl} from '@coral-xyz/anchor'
+import {Program, AnchorProvider} from '@coral-xyz/anchor'
 import idl from './idl/solana_bootcamp_project.json'
+import {SolanaBootcampProject} from "@/types/solana_bootcamp_project";
 
 
 //Check program id in env file
@@ -33,6 +34,5 @@ export const getProvider = () => {
 
 export const getProgram = () => {
     const provider = getProvider()
-    console.log("IDL:", idl)
-    return new Program(idl as Idl, provider)
+    return new Program<SolanaBootcampProject>(idl as never, provider)
 }
