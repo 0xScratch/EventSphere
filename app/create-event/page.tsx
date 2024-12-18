@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { getProgram } from '@/utils/connectAnchorProgram'
-import { BN, web3, AnchorError, AnchorProvider } from '@project-serum/anchor'
+import { BN, web3, AnchorError, AnchorProvider } from '@coral-xyz/anchor'
 import { MapPin, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

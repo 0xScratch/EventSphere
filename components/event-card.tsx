@@ -4,7 +4,6 @@ import Image from 'next/image'
 import {Button} from '@/components/ui/button'
 import {EventDetailsUser} from './event-details-user'
 import {Calendar} from 'lucide-react'
-import {SOL_PRICE_USD} from '@/utils/constants';
 
 interface EventCardProps {
     title: string
