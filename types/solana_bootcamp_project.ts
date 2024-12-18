@@ -1,14 +1,20 @@
-{
+/**
+ * Program IDL in camelCase format in order to be used in JS/TS.
+ *
+ * Note that this is only a type helper and is not the actual IDL. The original
+ * IDL can be found at `target/idl/solana_bootcamp_project.json`.
+ */
+export type SolanaBootcampProject = {
   "address": "7xrHyiezMLNeraJn8rtEbzQB6BhQwjYZSh6wA4p3sv3c",
   "metadata": {
-    "name": "solana_bootcamp_project",
+    "name": "solanaBootcampProject",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "create_event",
+      "name": "createEvent",
       "discriminator": [
         49,
         219,
@@ -31,7 +37,7 @@
           "signer": true
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -57,21 +63,21 @@
           "type": "i64"
         },
         {
-          "name": "ticket_quantity",
+          "name": "ticketQuantity",
           "type": "u32"
         },
         {
-          "name": "ticket_price",
+          "name": "ticketPrice",
           "type": "u64"
         },
         {
-          "name": "tickets_minted",
+          "name": "ticketsMinted",
           "type": "u32"
         }
       ]
     },
     {
-      "name": "get_user_tickets",
+      "name": "getUserTickets",
       "discriminator": [
         39,
         51,
@@ -87,14 +93,14 @@
           "name": "user",
           "signer": true,
           "relations": [
-            "ticket_purchase"
+            "ticketPurchase"
           ]
         },
         {
           "name": "event"
         },
         {
-          "name": "ticket_purchase",
+          "name": "ticketPurchase",
           "pda": {
             "seeds": [
               {
@@ -132,7 +138,7 @@
       "args": []
     },
     {
-      "name": "purchase_tickets",
+      "name": "purchaseTickets",
       "discriminator": [
         146,
         121,
@@ -154,7 +160,7 @@
           "writable": true
         },
         {
-          "name": "ticket_purchase",
+          "name": "ticketPurchase",
           "writable": true,
           "pda": {
             "seeds": [
@@ -190,7 +196,7 @@
           }
         },
         {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
       ],
@@ -204,7 +210,7 @@
   ],
   "accounts": [
     {
-      "name": "EventContract",
+      "name": "eventContract",
       "discriminator": [
         137,
         13,
@@ -217,7 +223,7 @@
       ]
     },
     {
-      "name": "TicketPurchase",
+      "name": "ticketPurchase",
       "discriminator": [
         222,
         22,
@@ -233,23 +239,23 @@
   "errors": [
     {
       "code": 6000,
-      "name": "ExceedsMaxTickets",
+      "name": "exceedsMaxTickets",
       "msg": "Cannot purchase more than 5 tickets"
     },
     {
       "code": 6001,
-      "name": "NoTicketsAvailable",
+      "name": "noTicketsAvailable",
       "msg": "No tickets available"
     },
     {
       "code": 6002,
-      "name": "InvalidQuantity",
+      "name": "invalidQuantity",
       "msg": "Invalid quantity"
     }
   ],
   "types": [
     {
-      "name": "EventContract",
+      "name": "eventContract",
       "type": {
         "kind": "struct",
         "fields": [
@@ -274,26 +280,26 @@
             "type": "i64"
           },
           {
-            "name": "ticket_quantity",
+            "name": "ticketQuantity",
             "type": "u32"
           },
           {
-            "name": "ticket_price",
+            "name": "ticketPrice",
             "type": "u64"
           },
           {
-            "name": "tickets_minted",
+            "name": "ticketsMinted",
             "type": "u32"
           },
           {
-            "name": "soul_bound_token_mint",
+            "name": "soulBoundTokenMint",
             "type": "string"
           }
         ]
       }
     },
     {
-      "name": "TicketPurchase",
+      "name": "ticketPurchase",
       "type": {
         "kind": "struct",
         "fields": [
@@ -302,11 +308,11 @@
             "type": "pubkey"
           },
           {
-            "name": "event_id",
+            "name": "eventId",
             "type": "pubkey"
           },
           {
-            "name": "token_ids",
+            "name": "tokenIds",
             "type": {
               "vec": "pubkey"
             }
@@ -323,4 +329,4 @@
       }
     }
   ]
-}
+};
