@@ -1,0 +1,1 @@
+export const SOL_PRICE_USD = 215.85;

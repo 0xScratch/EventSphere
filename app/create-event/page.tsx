@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { getProgram } from '@/utils/connectAnchorProgram'
-import { BN, web3, AnchorError, AnchorProvider } from '@project-serum/anchor'
+import { BN, web3, AnchorError, AnchorProvider } from '@coral-xyz/anchor'
 import { MapPin, Upload, DollarSign } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Image from 'next/image'
 import { useWallet } from '@solana/wallet-adapter-react'
-
+import { SOL_PRICE_USD } from '@/utils/constants';
 export default function CreateEvent() {
   const [image, setImage] = useState<File | null>(null)
   const { publicKey } = useWallet()
@@ -22,8 +22,13 @@ export default function CreateEvent() {
   const [ticketPrice, setTicketPrice] = useState(20)
   const [notice, setNotice] = useState({ msg: '', type: '' })
 
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('')
   const createEvent = async () => {
-    setNotice({ msg: '', type: '' })
+    if (!date || !time) {
+      setNotice({ msg: 'Please select date and time', type: 'err' })
+      return
+    }
 
     // We need Validate using Zod schema
 
@@ -34,10 +39,12 @@ export default function CreateEvent() {
       const provider = program.provider as AnchorProvider
 
       // Generate a new keypair for the proposal
+
       const eventAccount = web3.Keypair.generate()
       const organizer = provider.wallet.publicKey
-      const ticketsMinted = 11111111
-      const date = 45211121
+      const ticketsMinted = 0
+      const priceInLamports = new BN(Math.floor((ticketPrice / SOL_PRICE_USD) * 1e9));
+      const timestamp = Math.floor(new Date(`${date}T${time}`).getTime() / 1000)
 
       await program.methods
         .createEvent(
@@ -45,9 +52,9 @@ export default function CreateEvent() {
           name,
           description,
           location,
-          new BN(date.toString()),
+          new BN(timestamp),
           ticketQuantity,
-          new BN(ticketPrice.toString()), // Use BN for u64
+            priceInLamports,
           ticketsMinted
         )
         .accounts({
@@ -178,9 +185,11 @@ export default function CreateEvent() {
                   Date
                 </label>
                 <Input
-                  id="event-date"
-                  type="date"
-                  className="appearance-none"
+                    id="event-date"
+                    type="date"
+                    className="appearance-none"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
                 />
               </div>
               <div>
@@ -191,9 +200,11 @@ export default function CreateEvent() {
                   Time
                 </label>
                 <Input
-                  id="event-time"
-                  type="time"
-                  className="appearance-none"
+                    id="event-time"
+                    type="time"
+                    className="appearance-none"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
                 />
               </div>
             </div>
