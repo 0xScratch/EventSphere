@@ -58,25 +58,6 @@ export default function Home() {
       {/* Events Section */}
       <div className="bg-white pt-24 pb-12">
         <section className="px-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Most Popular Events</h2>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-              >
-                ←
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-              >
-                →
-              </Button>
-            </div>
-          </div>
           <EventList />
         </section>
       </div>

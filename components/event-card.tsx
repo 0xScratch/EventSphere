@@ -12,19 +12,22 @@ interface EventCardProps {
   description: string
   time: string
   location: string
-  availableTickets: number
   price: number
   id: string
+  ticketQuantity: number
+  ticketsMinted: number
 }
 
 export default function EventCard({
+  ticketQuantity,
+  ticketsMinted,
+  id,
   title,
   date,
   image,
   description,
   time,
   location,
-  availableTickets,
   price
 }: EventCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,11 +36,9 @@ export default function EventCard({
     <>
       <div
         className="bg-white rounded-3xl overflow-hidden shadow-lg cursor-pointer"
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => setIsModalOpen(ticketQuantity - ticketsMinted > 0)}
       >
         <div className="relative h-40">
-          {' '}
-          {/* Update 1: Reduced image height */}
           <Image
             src={image}
             alt={title}
@@ -45,36 +46,57 @@ export default function EventCard({
             className="object-cover"
           />
         </div>
-        <div className="p-3 flex justify-between items-center">
-          {' '}
-          {/* Update 2: Reduced padding */}
-          <div>
-            <h3 className="text-lg font-semibold mb-1">{title}</h3>
-            <div className="flex items-center text-gray-500">
-              <Calendar className="h-4 w-4 mr-2" />
-              <time>{date}</time>
+        <div className="p-3 flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-semibold mb-1">{title}</h3>
+              <div className="flex items-center text-gray-500">
+                <Calendar className="h-4 w-4 mr-2" />
+                <time>{date}</time>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-3xl font-bold px-5 border-[2.45px] border-gray-500 hover:bg-gray-100"
+            >
+              {ticketQuantity - ticketsMinted > 0 ? (
+                <span>Buy</span>
+              ) : (
+                <span className="text-red-500">Finished</span>
+              )}
+            </Button>
+          </div>
+
+          <div className="mt-2">
+            <div className="flex justify-between text-sm text-gray-500 mb-1">
+              <span>{ticketsMinted} sold</span>
+              <span>{ticketQuantity} total</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div
+                className="bg-blue-600 h-1.5 rounded-full"
+                style={{
+                  width: `${(ticketsMinted / ticketQuantity) * 100}%`
+                }}
+              />
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="lg"
-            className="rounded-3xl font-bold px-5 border-[2.45px] border-gray-500 hover:bg-gray-100"
-          >
-            Buy
-          </Button>
         </div>
       </div>
       <EventDetailsUser
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         event={{
+          ticketQuantity,
+          ticketsMinted,
+          id: id,
           name: title,
           image,
           description,
           date,
           time,
           location,
-          availableTickets,
           price
         }}
       />
