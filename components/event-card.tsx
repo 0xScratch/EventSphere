@@ -1,9 +1,12 @@
 'use client'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import Image from 'next/image'
 import {Button} from '@/components/ui/button'
 import {EventDetailsUser} from './event-details-user'
 import {Calendar} from 'lucide-react'
+import {useWallet} from '@solana/wallet-adapter-react'
+import {web3} from '@coral-xyz/anchor'
+import {getProgram} from '@/utils/connectAnchorProgram'
 
 interface EventCardProps {
     title: string
@@ -17,7 +20,6 @@ interface EventCardProps {
     ticketQuantity: number;
     ticketsMinted: number;
 }
-
 
 export default function EventCard(
     {
@@ -33,12 +35,45 @@ export default function EventCard(
         price
     }: EventCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [hasTickets, setHasTickets] = useState(false)
+    const wallet = useWallet()
+
+    useEffect(() => {
+        const checkExistingPurchase = async () => {
+            if (!wallet.publicKey) return
+
+            try {
+                const program = getProgram()
+                const [ticketPurchasePDA] = web3.PublicKey.findProgramAddressSync(
+                    [
+                        Buffer.from("ticket_purchase"),
+                        wallet.publicKey.toBuffer(),
+                        new web3.PublicKey(id).toBuffer()
+                    ],
+                    program.programId
+                )
+
+                await program.account.ticketPurchase.fetch(ticketPurchasePDA)
+                setHasTickets(true)
+            } catch {
+                setHasTickets(false)
+            }
+        }
+
+        checkExistingPurchase()
+    }, [wallet.publicKey, id])
+
+    const handleCardClick = () => {
+        if (!hasTickets) {
+            setIsModalOpen(true)
+        }
+    }
 
     return (
         <>
             <div
-                className="bg-white rounded-3xl overflow-hidden shadow-lg cursor-pointer"
-                onClick={() => setIsModalOpen(true)}
+                className={`bg-white rounded-3xl overflow-hidden shadow-lg ${!hasTickets ? 'cursor-pointer' : ''}`}
+                onClick={handleCardClick}
             >
                 <div className="relative h-40">
                     <Image
@@ -60,9 +95,14 @@ export default function EventCard(
                         <Button
                             variant="outline"
                             size="lg"
-                            className="rounded-3xl font-bold px-5 border-[2.45px] border-gray-500 hover:bg-gray-100"
+                            disabled={hasTickets}
+                            className={`rounded-3xl font-bold px-5 border-[2.45px] ${
+                                hasTickets
+                                    ? 'border-gray-300 text-gray-400'
+                                    : 'border-gray-500 hover:bg-gray-100'
+                            }`}
                         >
-                            Buy
+                            {hasTickets ? 'Already Purchased' : 'Buy'}
                         </Button>
                     </div>
 
@@ -80,22 +120,24 @@ export default function EventCard(
                     </div>
                 </div>
             </div>
-            <EventDetailsUser
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                event={{
-                    ticketQuantity,
-                    ticketsMinted,
-                    id: id,
-                    name: title,
-                    image,
-                    description,
-                    date,
-                    time,
-                    location,
-                    price
-                }}
-            />
+            {!hasTickets && (
+                <EventDetailsUser
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    event={{
+                        ticketQuantity,
+                        ticketsMinted,
+                        id: id,
+                        name: title,
+                        image,
+                        description,
+                        date,
+                        time,
+                        location,
+                        price
+                    }}
+                />
+            )}
         </>
     )
 }
