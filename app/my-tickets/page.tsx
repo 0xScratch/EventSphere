@@ -44,7 +44,7 @@ export default function MyTickets() {
       ])
 
       const tickets = await Promise.all(
-        ticketPurchases.map(async (purchase: any) => {
+        ticketPurchases.map(async (purchase) => {
           const event = await program.account.eventContract.fetch(
             purchase.account.eventId
           )

@@ -1,44 +1,30 @@
 {
-  "address": "7xrHyiezMLNeraJn8rtEbzQB6BhQwjYZSh6wA4p3sv3c",
-  "metadata": {
-    "name": "solana_bootcamp_project",
-    "version": "0.1.0",
-    "spec": "0.1.0",
-    "description": "Created with Anchor"
-  },
+  "version": "0.1.0",
+  "name": "solana_bootcamp_project",
   "instructions": [
     {
-      "name": "create_event",
-      "discriminator": [
-        49,
-        219,
-        29,
-        203,
-        22,
-        98,
-        100,
-        87
-      ],
+      "name": "createEvent",
       "accounts": [
         {
           "name": "event",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
           "name": "user",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
         {
           "name": "organizer",
-          "type": "pubkey"
+          "type": "publicKey"
         },
         {
           "name": "name",
@@ -57,141 +43,41 @@
           "type": "i64"
         },
         {
-          "name": "ticket_quantity",
+          "name": "ticketQuantity",
           "type": "u32"
         },
         {
-          "name": "ticket_price",
+          "name": "ticketPrice",
           "type": "u64"
         },
         {
-          "name": "tickets_minted",
+          "name": "ticketsMinted",
           "type": "u32"
         }
       ]
     },
     {
-      "name": "get_user_tickets",
-      "discriminator": [
-        39,
-        51,
-        254,
-        11,
-        52,
-        189,
-        11,
-        169
-      ],
+      "name": "purchaseTickets",
       "accounts": [
         {
           "name": "user",
-          "signer": true,
-          "relations": [
-            "ticket_purchase"
-          ]
-        },
-        {
-          "name": "event"
-        },
-        {
-          "name": "ticket_purchase",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  105,
-                  99,
-                  107,
-                  101,
-                  116,
-                  95,
-                  112,
-                  117,
-                  114,
-                  99,
-                  104,
-                  97,
-                  115,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "user"
-              },
-              {
-                "kind": "account",
-                "path": "event"
-              }
-            ]
-          }
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "purchase_tickets",
-      "discriminator": [
-        146,
-        121,
-        85,
-        207,
-        182,
-        70,
-        169,
-        155
-      ],
-      "accounts": [
-        {
-          "name": "user",
-          "writable": true,
-          "signer": true
+          "isMut": true,
+          "isSigner": true
         },
         {
           "name": "event",
-          "writable": true
+          "isMut": true,
+          "isSigner": false
         },
         {
-          "name": "ticket_purchase",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  105,
-                  99,
-                  107,
-                  101,
-                  116,
-                  95,
-                  112,
-                  117,
-                  114,
-                  99,
-                  104,
-                  97,
-                  115,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "user"
-              },
-              {
-                "kind": "account",
-                "path": "event"
-              }
-            ]
-          }
+          "name": "ticketPurchase",
+          "isMut": true,
+          "isSigner": false
         },
         {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": [
@@ -205,57 +91,12 @@
   "accounts": [
     {
       "name": "EventContract",
-      "discriminator": [
-        137,
-        13,
-        134,
-        204,
-        99,
-        7,
-        205,
-        34
-      ]
-    },
-    {
-      "name": "TicketPurchase",
-      "discriminator": [
-        222,
-        22,
-        3,
-        148,
-        12,
-        69,
-        58,
-        40
-      ]
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "ExceedsMaxTickets",
-      "msg": "Cannot purchase more than 5 tickets"
-    },
-    {
-      "code": 6001,
-      "name": "NoTicketsAvailable",
-      "msg": "No tickets available"
-    },
-    {
-      "code": 6002,
-      "name": "InvalidQuantity",
-      "msg": "Invalid quantity"
-    }
-  ],
-  "types": [
-    {
-      "name": "EventContract",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "organizer",
-            "type": "pubkey"
+            "type": "publicKey"
           },
           {
             "name": "name",
@@ -274,19 +115,19 @@
             "type": "i64"
           },
           {
-            "name": "ticket_quantity",
+            "name": "ticketQuantity",
             "type": "u32"
           },
           {
-            "name": "ticket_price",
+            "name": "ticketPrice",
             "type": "u64"
           },
           {
-            "name": "tickets_minted",
+            "name": "ticketsMinted",
             "type": "u32"
           },
           {
-            "name": "soul_bound_token_mint",
+            "name": "soulBoundTokenMint",
             "type": "string"
           }
         ]
@@ -299,16 +140,16 @@
         "fields": [
           {
             "name": "user",
-            "type": "pubkey"
+            "type": "publicKey"
           },
           {
-            "name": "event_id",
-            "type": "pubkey"
+            "name": "eventId",
+            "type": "publicKey"
           },
           {
-            "name": "token_ids",
+            "name": "tokenIds",
             "type": {
-              "vec": "pubkey"
+              "vec": "publicKey"
             }
           },
           {
@@ -321,6 +162,23 @@
           }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "ExceedsMaxTickets",
+      "msg": "Cannot purchase more than 5 tickets"
+    },
+    {
+      "code": 6001,
+      "name": "NoTicketsAvailable",
+      "msg": "No tickets available"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidQuantity",
+      "msg": "Invalid quantity"
     }
   ]
 }
