@@ -57,6 +57,10 @@ export function EventDetailsUser({isOpen, onClose, event}: EventDetailsUserProps
 
             const program = getProgram();
 
+            const eventAccount = await program.account.eventContract.fetch(
+                new web3.PublicKey(event.id)
+            );
+
             const [ticketPurchasePDA] = web3.PublicKey.findProgramAddressSync(
                 [
                     Buffer.from("ticket_purchase"),
@@ -73,6 +77,7 @@ export function EventDetailsUser({isOpen, onClose, event}: EventDetailsUserProps
                 .accounts({
                     user: wallet.publicKey,
                     event: new web3.PublicKey(event.id),
+                    eventOrganizer: eventAccount.organizer,
                     ticketPurchase: ticketPurchasePDA,
                     systemProgram: web3.SystemProgram.programId,
                 } as never)
@@ -116,7 +121,8 @@ export function EventDetailsUser({isOpen, onClose, event}: EventDetailsUserProps
                         ${displayPrice(Number(event.price) || 0)} USD ({(Number(event.price) / 1e9).toFixed(4)} SOL)
                     </div>
                     <div className="text-sm text-gray-600">
-                        <span className="font-semibold">{event.ticketQuantity - event.ticketsMinted}</span> tickets remaining
+                        <span className="font-semibold">{event.ticketQuantity - event.ticketsMinted}</span> tickets
+                        remaining
                     </div>
                     <div>
                         <label htmlFor="ticket-count" className="block text-sm font-bold text-gray-700 mb-2">

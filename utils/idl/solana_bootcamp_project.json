@@ -1,5 +1,5 @@
 {
-  "address": "2ib7Hs36VGCkK2jrQYhXQmoLo2NroovyfSZf4khDj2qq",
+  "address": "CvBnu3xn3yrd2g73iYsBhiGWqMjpvPfiUTGVPpsQGJBN",
   "metadata": {
     "name": "solana_bootcamp_project",
     "version": "0.1.0",
@@ -151,6 +151,10 @@
         },
         {
           "name": "event",
+          "writable": true
+        },
+        {
+          "name": "event_organizer",
           "writable": true
         },
         {
