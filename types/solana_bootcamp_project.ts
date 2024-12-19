@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/solana_bootcamp_project.json`.
  */
 export type SolanaBootcampProject = {
-  "address": "7xrHyiezMLNeraJn8rtEbzQB6BhQwjYZSh6wA4p3sv3c",
+  "address": "2ib7Hs36VGCkK2jrQYhXQmoLo2NroovyfSZf4khDj2qq",
   "metadata": {
     "name": "solanaBootcampProject",
     "version": "0.1.0",
